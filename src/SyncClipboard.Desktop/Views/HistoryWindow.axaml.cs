@@ -248,6 +248,26 @@ public partial class HistoryWindow : Window, IWindow
         _ = _viewModel.CopyToClipboard(record, true, CancellationToken.None);
     }
 
+    private void FontScaleMenuItem_Click(object? sender, RoutedEventArgs e)
+    {
+        this.TryGetResource("FontScaleFlyout", null, out var resource);
+        if (resource is Flyout flyout)
+        {
+            if (flyout.Content is StackPanel panel)
+            {
+                ((TextBlock)panel.Children[0]).Text = SyncClipboard.Core.I18n.Strings.FontScale;
+                ((NumericUpDown)panel.Children[1]).Value = _viewModel.FontScalePercent;
+            }
+            flyout.ShowAt(_MenuButton);
+        }
+    }
+
+    private void FontScaleNumericUpDown_ValueChanged(object? sender, NumericUpDownValueChangedEventArgs e)
+    {
+        if (e.NewValue.HasValue)
+            _viewModel.FontScalePercent = (int)Math.Clamp((double)e.NewValue.Value, 25, 400);
+    }
+
     private void CopyButtonClicked(object? sender, RoutedEventArgs e)
     {
         var history = ((Button?)sender)?.DataContext;
